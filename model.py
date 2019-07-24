@@ -61,12 +61,13 @@ class CNN(nn.Module):
         return getattr(self, f'conv_{i}')
     
     def forward(self, inp):
-        # 这一步什么意思？
+        # 将(batch_size, MAX_SENT_LEN, WORD_DIM)reshape成1通道，即(batch_size, 1, WORD_DIM * self.MAX_SENT_LEN)
+        # 方便cnn的输入
         x = self.embedding(inp).view(-1, 1, self.WORD_DIM * self.MAX_SENT_LEN)
         if self.MODEL == "multichannel":
             x2 = self.embedding2(inp).view(-1, 1, self.WORD_DIM * self.MAX_SENT_LEN)
             x = torch.cat((x, x2), 1) # 1表示按列拼接
-            
+        # pooling的步长是正好是整个feature map，因此变成了一维   
         conv_results = [
                 F.max_pool1d(F.relu(self.get_conv(i)(x)), self.MAX_SENT_LEN - self.FILTERS[i] + 1) 
                 .view(-1, self.FILTER_NUM[i]) for i in range(len(self.FILTERS))]
