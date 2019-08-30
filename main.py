@@ -26,7 +26,7 @@ def train(data, params):
         for i in range(len(data["vocab"])):
             word = data["idx_to_word"][i]
             if word in word_vectors.vocab:
-                wv_matrix.append(word_vectors.word_word_vec(word))
+                wv_matrix.append(word_vectors.word_vec(word))
             else:
                 wv_matrix.append(np.random.uniform(-0.01, 0.01, 300).astype("float32"))
                 
